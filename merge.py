@@ -74,26 +74,38 @@ def compute_merge(x: torch.Tensor, tome_info):
     original_h, original_w = tome_info["size"]
     original_tokens = original_h * original_w
     downsample = int(math.ceil(math.sqrt(original_tokens // x.shape[1])))
+    dim = x.shape[-1]
+    if dim == 320:
+        cur_level = "level_1"
+        downsample_factor = tome_info['args']['downsample_factor']
+        ratio = tome_info['args']['ratio']
+    elif dim == 640:
+        cur_level = "level_2"
+        downsample_factor = tome_info['args']['downsample_factor_level_2']
+        ratio = tome_info['args']['ratio_level_2']
+    else:
+        cur_level = "other"
+        downsample_factor = 1
+        ratio = 0.0
 
     args = tome_info["args"]
 
     cur_h, cur_w = original_h // downsample, original_w // downsample
-    new_h, new_w = cur_h // args['downsample_factor'], cur_w // args['downsample_factor']
+    new_h, new_w = cur_h // downsample_factor, cur_w // downsample_factor
 
     if tome_info['timestep'] / 1000 > tome_info['args']['timestep_threshold_switch']:
         merge_method = args["merge_method"]
     else:
         merge_method = args["secondary_merge_method"]
 
-    if downsample <= args["max_downsample"] and tome_info['timestep'] / 1000 > tome_info['args'][
-        'timestep_threshold_stop']:
-        if merge_method == "downsample":
+    if cur_level != "other" and tome_info['timestep'] / 1000 > tome_info['args']['timestep_threshold_stop']:
+        if merge_method == "downsample" and downsample_factor > 1:
             m = lambda x: up_or_downsample(x, cur_w, cur_h, new_w, new_h, args["downsample_method"])
             u = lambda x: up_or_downsample(x, new_w, new_h, cur_w, cur_h, args["downsample_method"])
-        elif merge_method == "similarity":
+        elif merge_method == "similarity" and ratio > 0.0:
             w = int(math.ceil(original_w / downsample))
             h = int(math.ceil(original_h / downsample))
-            r = int(x.shape[1] * args["ratio"])
+            r = int(x.shape[1] * ratio)
 
             # Re-init the generator if it hasn't already been initialized or device has changed.
             if args["generator"] is None:
@@ -117,7 +129,11 @@ def compute_merge(x: torch.Tensor, tome_info):
 
 
 def bipartite_soft_matching_random2d(metric: torch.Tensor,
-                                     w: int, h: int, sx: int, sy: int, r: int,
+                                     w: int, 
+                                     h: int, 
+                                     sx: int, 
+                                     sy: int, 
+                                     r: int,
                                      no_rand: bool = False,
                                      generator: torch.Generator = None) -> Tuple[Callable, Callable]:
     """
@@ -261,7 +277,7 @@ class TokenMergeAttentionProcessor:
             attention_mask = attention_mask.reshape(batch_size * attn.heads, -1, attention_mask.shape[-1])
 
         hidden_states = xformers.ops.memory_efficient_attention(
-            query, key, value, attn_bias=attention_mask, op=self.attention_op, scale=attn.scale
+            query, key, value, attn_bias=attention_mask, scale=attn.scale
         )
 
         hidden_states = attn.batch_to_head_dim(hidden_states)
@@ -350,7 +366,7 @@ class TokenMergeAttentionProcessor:
         # dropout
         hidden_states = attn.to_out[1](hidden_states)
 
-        if self._tome_info['args']['merge_method'] == "all":
+        if self._tome_info['args']['merge_tokens'] == "all":
             hidden_states = unmerge_fn(hidden_states)
 
         if input_ndim == 4:

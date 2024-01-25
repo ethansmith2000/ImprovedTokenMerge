@@ -1,6 +1,5 @@
 import torch
-from merge import TokenMergeXFormersAttnProcessor
-
+from merge import TokenMergeAttentionProcessor
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.models.attention_processor import AttnProcessor2_0, XFormersAttnProcessor, AttnProcessor
 import torch.nn.functional as F
@@ -14,12 +13,6 @@ if hasattr(F, "scaled_dot_product_attention"):
     torch2_is_available = True
 else:
     torch2_is_available = False
-
-def torch_dfs(model: torch.nn.Module):
-    result = [model]
-    for child in model.children():
-        result += torch_dfs(child)
-    return result
 
 
 def hook_tome_model(model: torch.nn.Module):
@@ -45,9 +38,6 @@ def patch_attention_proc(unet, token_merge_args={}):
             "use_rand": token_merge_args.get("use_rand", True),
             "generator": None,
 
-            "max_downsample": token_merge_args.get("max_downsample", 1),
-            # max depth of unet to do merging at, 1 means only top level of unet
-
             "merge_tokens": token_merge_args.get("merge_tokens", "keys/values"),  # ["all", "keys/values"]
             "merge_method": token_merge_args.get("merge_method", "downsample"),  # ["none","similarity", "downsample"]
             "downsample_method": token_merge_args.get("downsample_method", "nearest-exact"),
@@ -59,21 +49,21 @@ def patch_attention_proc(unet, token_merge_args={}):
             # timestep to stop merging, 0.0 means stop at 0 steps remaining
             "secondary_merge_method": token_merge_args.get("secondary_merge_method", "similarity"),
             # ["none", "similarity", "downsample"]
+
+            "downsample_factor_level_2": token_merge_args.get("downsample_factor_level_2", 1), # amount to downsample by at the 2nd down block of unet
+            "ratio_level_2": token_merge_args.get("ratio_level_2", 0.5), # ratio of tokens to merge at the 2nd down block of unet
         }
     }
     hook_tome_model(unet)
-    attn_modules = [module for module in torch_dfs(unet) if module.__class__.__name__ == 'BasicTransformerBlock']
+    attn_modules = [module for name, module in unet.named_modules() if module.__class__.__name__ == 'BasicTransformerBlock']
 
     for i, module in enumerate(attn_modules):
-        module.attn1.processor = TokenMergeXFormersAttnProcessor()
+        module.attn1.processor = TokenMergeAttentionProcessor()
         module.attn1.processor._tome_info = unet._tome_info
 
 
 def remove_patch(pipe: torch.nn.Module):
     """ Removes a patch from a ToMe Diffusion module if it was already patched. """
-
-    if hasattr(pipe.unet, "_tome_info"):
-        del pipe._tome_info
 
     # this will remove our custom class
     if torch2_is_available:
@@ -81,12 +71,10 @@ def remove_patch(pipe: torch.nn.Module):
             if hasattr(m, "processor"):
                 m.processor = AttnProcessor2_0()
 
-    if xformers_is_available:
+    elif xformers_is_available:
         pipe.enable_xformers_memory_efficient_attention()
 
     else:
         for n,m in pipe.unet.named_modules():
             if hasattr(m, "processor"):
                 m.processor = AttnProcessor()
-
-    return pipe
