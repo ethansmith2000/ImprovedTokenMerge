@@ -1,5 +1,6 @@
 # ImprovedTokenMerge
 ![compare3.png](compare3.png)
+![GEuoFn1bMAABQqD](https://github.com/ethansmith2000/ImprovedTokenMerge/assets/98723285/82e03423-81e6-47da-afa4-9c1b2c1c4aeb)
 
 heavily inspired by https://github.com/dbolya/tomesd by @dbolya, a big thanks to the original authors.
 
