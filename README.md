@@ -2,6 +2,8 @@
 ![compare3.png](compare3.png)
 ![GEuoFn1bMAABQqD](https://github.com/ethansmith2000/ImprovedTokenMerge/assets/98723285/82e03423-81e6-47da-afa4-9c1b2c1c4aeb)
 
+twitter thread explanation: https://twitter.com/Ethan_smith_20/status/1750533558509433137
+
 heavily inspired by https://github.com/dbolya/tomesd by @dbolya, a big thanks to the original authors.
 
 This project aims to adress some of the shortcomings of Token Merging for Stable Diffusion. Namely consistenly faster inference without quality loss.
