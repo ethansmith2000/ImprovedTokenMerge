@@ -8,6 +8,15 @@ import math
 import numpy as np
 from PIL import Image
 
+# Globals
+css = """
+h1 {
+  text-align: center;
+  display: block;
+}
+"""
+
+# Pipeline
 pipe = diffusers.StableDiffusionPipeline.from_pretrained("Lykon/DreamShaper").to("cuda", torch.float16)
 pipe.scheduler = diffusers.EulerDiscreteScheduler.from_config(pipe.scheduler.config)
 pipe.safety_checker = None
@@ -70,24 +79,28 @@ def generate(prompt, seed, steps, height_width, negative_prompt, guidance_scale,
 
     return base_img, merged_img, result
 
-with gr.Blocks() as demo:
+
+
+with gr.Blocks(css=css) as demo:
+    gr.Markdown("# ToDo: Token Downsampling for Efficient Generation of High-Resolution Images")
     prompt = gr.Textbox(interactive=True, label="prompt")
     negative_prompt = gr.Textbox(interactive=True, label="negative_prompt")
-    method = gr.Dropdown(["todo", "tome"], value="todo", label="method", info="Choose Your Desired Method (Default: todo)")
-    height_width = gr.Dropdown([1024, 1536, 2048], value=1024, label="height/width", info="Choose Your Desired Height/Width (Default: 1024)")
-    # height = gr.Number(label="height", value=1024, precision=0)
-    # width = gr.Number(label="width", value=1024, precision=0)
-    guidance_scale = gr.Number(label="guidance_scale", value=7.5, precision=1)
-    steps = gr.Number(label="steps", value=20, precision=0)
-    seed = gr.Number(label="seed", value=1, precision=0)
-    result = gr.Textbox(label="Result")
+    
+    with gr.Row():
+        method = gr.Dropdown(["todo", "tome"], value="todo", label="method", info="Choose Your Desired Method (Default: todo)")
+        height_width = gr.Dropdown([1024, 1536, 2048], value=1024, label="height/width", info="Choose Your Desired Height/Width (Default: 1024)")
 
+    with gr.Row():
+        guidance_scale = gr.Number(label="guidance_scale", value=7.5, precision=1)
+        steps = gr.Number(label="steps", value=20, precision=0)
+        seed = gr.Number(label="seed", value=1, precision=0)
+
+    result = gr.Textbox(label="Result")
     with gr.Row():
         base_image = gr.Image(label=f"baseline_image", type="pil", interactive=False)
         output_image = gr.Image(label=f"output_image", type="pil", interactive=False)
 
     gen = gr.Button("generate")
-
     gen.click(generate, inputs=[prompt, seed, steps, height_width, negative_prompt,
                                 guidance_scale, method], outputs=[base_image, output_image, result])
 

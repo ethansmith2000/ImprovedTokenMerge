@@ -1,14 +1,26 @@
 ---
 title: ToDo
+emoji: 🔥
 app_file: app.py
 sdk: gradio
 sdk_version: 4.19.2
 ---
-# ImprovedTokenMerge
+# ToDo: Token Downsampling for Efficient Generation of High-Resolution Images
+---
+
+This is a demo for our recently proposed method, ["ToDo: Token Downsampling for Efficient Generation of High-Resolution Images"](https://arxiv.org/abs/2402.13573), compared against a popular token merging method, ToMe. 
+
+```
+@misc{smith2024todo,
+      title={ToDo: Token Downsampling for Efficient Generation of High-Resolution Images}, 
+      author={Ethan Smith and Nayan Saxena and Aninda Saha},
+      year={2024},
+      eprint={2402.13573},
+      archivePrefix={arXiv}
+}
+```
+
 ![GEuoFn1bMAABQqD](https://github.com/ethansmith2000/ImprovedTokenMerge/assets/98723285/82e03423-81e6-47da-afa4-9c1b2c1c4aeb)
-
-
-paper: https://arxiv.org/abs/2402.13573
 
 blog post: https://sweet-hall-e72.notion.site/ToDo-Token-Downsampling-for-Efficient-Generation-of-High-Resolution-Images-b41be1ac8ddc46be8cd687e67dee2d84?pvs=4
 
@@ -16,7 +28,6 @@ heavily inspired by https://github.com/dbolya/tomesd by @dbolya, a big thanks to
 
 This project aims to adress some of the shortcomings of Token Merging for Stable Diffusion. Namely consistenly faster inference without quality loss.
 I found with the original that you would have to use a high merging ratio to get really any speedups at all, and by then quality was tarnished. Benchmarks here: https://github.com/dbolya/tomesd/issues/19#issuecomment-1507593483
-
 
 
 I propose two changes to the original to solve this.
