@@ -25,6 +25,8 @@ If you consider our research to be helpful, please consider citing us:
 
 blog post: https://sweet-hall-e72.notion.site/ToDo-Token-Downsampling-for-Efficient-Generation-of-High-Resolution-Images-b41be1ac8ddc46be8cd687e67dee2d84?pvs=4
 
+hf demo: https://huggingface.co/spaces/aningineer/ToDo
+
 heavily inspired by https://github.com/dbolya/tomesd by @dbolya, a big thanks to the original authors.
 
 This project aims to adress some of the shortcomings of Token Merging for Stable Diffusion. Namely consistenly faster inference without quality loss.
