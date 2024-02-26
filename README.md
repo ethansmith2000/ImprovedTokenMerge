@@ -1,6 +1,6 @@
 ---
 title: ToDo
-emoji: 🔥
+emoji: ⚡️
 app_file: app.py
 sdk: gradio
 sdk_version: 4.19.2
@@ -8,8 +8,9 @@ sdk_version: 4.19.2
 # ToDo: Token Downsampling for Efficient Generation of High-Resolution Images
 ---
 
-This is a demo for our recently proposed method, ["ToDo: Token Downsampling for Efficient Generation of High-Resolution Images"](https://arxiv.org/abs/2402.13573), compared against a popular token merging method, ToMe. 
+We provide a [HuggingFace Spaces demo](https://huggingface.co/spaces/aningineer/ToDo) for our recently proposed method, ["ToDo: Token Downsampling for Efficient Generation of High-Resolution Images"](https://arxiv.org/abs/2402.13573), and compare it against a popular token merging method called ToMe. 
 
+If you consider our research to be helpful, please consider citing us:
 ```
 @misc{smith2024todo,
       title={ToDo: Token Downsampling for Efficient Generation of High-Resolution Images}, 
