@@ -7,7 +7,10 @@ sdk_version: 4.19.2
 # ImprovedTokenMerge
 ![GEuoFn1bMAABQqD](https://github.com/ethansmith2000/ImprovedTokenMerge/assets/98723285/82e03423-81e6-47da-afa4-9c1b2c1c4aeb)
 
-twitter thread explanation: https://twitter.com/Ethan_smith_20/status/1750533558509433137
+
+paper: https://arxiv.org/abs/2402.13573
+
+blog post: https://sweet-hall-e72.notion.site/ToDo-Token-Downsampling-for-Efficient-Generation-of-High-Resolution-Images-b41be1ac8ddc46be8cd687e67dee2d84?pvs=4
 
 heavily inspired by https://github.com/dbolya/tomesd by @dbolya, a big thanks to the original authors.
 
