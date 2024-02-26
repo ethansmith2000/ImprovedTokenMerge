@@ -25,6 +25,15 @@ def hook_tome_model(model: torch.nn.Module):
 
     model._tome_info["hooks"].append(model.register_forward_pre_hook(hook))
 
+def remove_patch(pipe: torch.nn.Module):
+    """ Removes a patch from a ToMe Diffusion module if it was already patched. """
+
+    if hasattr(pipe.unet, "_tome_info"):
+        del pipe.unet._tome_info
+
+    for n,m in pipe.unet.named_modules():
+        if hasattr(m, "processor"):
+            m.processor = AttnProcessor2_0()
 
 def patch_attention_proc(unet, token_merge_args={}):
     unet._tome_info = {
