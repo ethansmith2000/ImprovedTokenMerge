@@ -2,10 +2,9 @@
 title: ToDo
 app_file: app.py
 sdk: gradio
-sdk_version: 3.50.2
+sdk_version: 4.19.2
 ---
 # ImprovedTokenMerge
-![compare3.png](compare3.png)
 ![GEuoFn1bMAABQqD](https://github.com/ethansmith2000/ImprovedTokenMerge/assets/98723285/82e03423-81e6-47da-afa4-9c1b2c1c4aeb)
 
 twitter thread explanation: https://twitter.com/Ethan_smith_20/status/1750533558509433137
